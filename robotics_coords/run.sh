@@ -1,0 +1,1 @@
+gcc main.c $(pkg-config --cflags --libs sdl2) -lm
