@@ -69,18 +69,41 @@ void generate_point(SDL_Renderer* r, int32_t x_c, int32_t y_c, int32_t radius) {
     //probably will be even faster with predfined 40 digits of pi and some trig
 }
 
-void generate_arrow(SDL_Renderer* r, double x1, double x2, double y1, double y2) {
+void generate_arrow(SDL_Renderer* r, double x1, double y1, double x2, double y2) {
     float y_t = convert_coords(x2,y2).yn;
     int c = 20; //arbitrarily set magnitude of a line
-    double phi = acos((x2 / sqrt((pow(x2,2.0) + pow(y_t,2.0)))));
+    double phi = acos(x2 / sqrt((pow(x2,2.0) + pow(y2,2.0))) );
     float left = PI + (phi/2.0);
     float right = PI + (3.0*phi/2.0);
+    
+    printf("phi is %f \n", phi);
 
     SDL_SetRenderDrawColor(r, 0,255,0,255);
     SDL_RenderDrawLine(r,x1,convert_coords(x1,y1).yn,x2,y_t);
     SDL_SetRenderDrawColor(r, 255,0,0,255);
     SDL_RenderDrawLine(r,x2, y_t, (x2 + (c*cos(left))), (y_t - (c*sin(left))));
     SDL_RenderDrawLine(r,x2,y_t, x2 + (c*cos(right)), y_t - (c*sin(right)));
+}
+
+void clear_scheme(SDL_Renderer* render) {
+    SDL_SetRenderDrawColor(render, 0, 0,0, 255);
+    SDL_RenderClear(render);
+    SDL_RenderPresent(render);
+}
+// void nthpos(SDL_Renderer* render, SDL_Rect* rect) {
+//     SDL_SetRenderDrawColor(render, 255, 0, 0, 255);
+//     SDL_RenderFillRect(render, rect);
+//     SDL_RenderPresent(render);
+// }
+
+// void move(SDL_Rect* rect, float v) {
+//     rect->x += v;
+// }
+void move(float* buffer, float* x, float* y, float v) {
+    *x += v;
+    *y += v;
+    buffer[0] = *x;
+    buffer[1] = *y;
 }
 
 int main(int argc, char* argv[]) {
@@ -94,21 +117,41 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
     SDL_Window* win = SDL_CreateWindow("Example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, 0); //turns out top left corner is origin (0,0)
-    SDL_Renderer* render = SDL_CreateRenderer(win, -1, flags);
+    SDL_Renderer* render = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor(render,0,0,0,255);
     SDL_RenderClear(render);
     SDL_RenderPresent(render);
-
-    
-
     // create_border(render, 0, 0, 10, 800); //x,y,w,h
     // create_border(render, 790, 0, 10, 800);
     // create_border(render, 0, 790, 800, 10);
     // create_border(render, 0,0, 800, 10);
     
     // generate_point(render, 5, 5, 4); // not even a full circle just an approximation
-    generate_arrow(render, 0.0,400.0,0.0,400.0); //x1,x2,y1,y2
-    
+    //generate_arrow(render, 0.0,400.0,0.0,400.0); //x1,y1,x2,y2
+    float velocity = 10.0;
+    // SDL_Rect nr = {.x=100,.y=100,.h=30,.w=30};
+    // generate_arrow(render,0.0,0.0,770.0,10.0);
+    clear_scheme(render);
+    float xi = 0.0;
+    float yi = 0.0;
+    float max_r = 400.0;
+    generate_arrow(render, xi, 0.0, max_r, 0.0);
+    // nthpos(render, &nr);
+
+
+//    SDL_Delay(4000); //<- i guess this is our t
+
+    for(int i=0; i < 10; i++) {
+        float transform[2] = {0};
+        move(transform, &xi, &yi, velocity);
+        // clear_scheme(render);
+        generate_arrow(render, 0.0, 0.0, max_r + transform[0], transform[1]);
+        printf("xi is %f and yi is %f", xi, yi);
+        // SDL_Delay(100);
+    }
+    // clear_scheme(render);
+    // generate_arrow(render,)
+    // nthpos(render, &nr);
 
     SDL_RenderPresent(render);
     bool exit = false;
@@ -125,6 +168,9 @@ int main(int argc, char* argv[]) {
                 break;
             }
         }
+        // nr.x += velocity;
+        // clear_scheme(render);
+        // nthpos(render, &nr);
     }
 
     return 0;
