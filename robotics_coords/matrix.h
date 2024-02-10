@@ -2,6 +2,7 @@
 #include <math.h>
 
 #ifndef MATRIX_H
+#define MATRIX_H
 
 struct rotation_matrix {
 	 double m[2][2];
