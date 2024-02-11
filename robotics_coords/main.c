@@ -6,7 +6,7 @@
 #include <SDL2/SDL_timer.h>
 #include "matrix.h"
 
-#define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164
+#define PI 3.141592653589793
 #define WINDOW_HEIGHT 800
 #define WINDOWN_WIDTH 800
 
@@ -123,9 +123,13 @@ int main(int argc, char* argv[]) {
     // generate_arrow(render, xi, 0.0, max_r, 0.0);
 
     // SDL_RenderPresent(render);
-
-    struct matrix* m1 = new_matrix(2, 2);
-    print_matrix(m1);
+    char id= 'r';
+    char id2 ='i';
+    float angle = PI;
+    struct matrix* m1 = new_matrix(2, 2, &id, &angle);
+    struct matrix* m2 = new_matrix(2, 2, &id2, NULL);
+    confirm_transform2d(m1, m2);
+    // print_matrix(m1);
 
     bool exit = false;
     while(!exit) {
@@ -151,6 +155,7 @@ int main(int argc, char* argv[]) {
         // SDL_SetRenderDrawColor(render, 0x00,0x00,0x00,0xff);
         // SDL_RenderClear(render);
     }
+    free(m1);
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(win);
     return 0;
