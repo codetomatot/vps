@@ -4,6 +4,7 @@
 //#include <kipr/wombat.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
+#include "matrix.h"
 
 #define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164
 #define WINDOW_HEIGHT 800
@@ -90,20 +91,11 @@ void clear_scheme(SDL_Renderer* render) {
     SDL_RenderClear(render);
     SDL_RenderPresent(render);
 }
-// void nthpos(SDL_Renderer* render, SDL_Rect* rect) {
-//     SDL_SetRenderDrawColor(render, 255, 0, 0, 255);
-//     SDL_RenderFillRect(render, rect);
-//     SDL_RenderPresent(render);
-// }
 
-// void move(SDL_Rect* rect, float v) {
-//     rect->x += v;
-// }
-void move(float* buffer, float* x, float* y, float v) {
-    *x += v;
-    *y += v;
-    buffer[0] = *x;
-    buffer[1] = *y;
+void move(float* x, float* y, float v) { //buffer, 0,0,10
+    *x += v; *y += v;
+    // buffer[0] = *x;
+    // buffer[1] = *y;
 }
 
 int main(int argc, char* argv[]) {
@@ -121,14 +113,8 @@ int main(int argc, char* argv[]) {
     SDL_SetRenderDrawColor(render,0,0,0,255);
     SDL_RenderClear(render);
     SDL_RenderPresent(render);
-    // create_border(render, 0, 0, 10, 800); //x,y,w,h
-    // create_border(render, 790, 0, 10, 800);
-    // create_border(render, 0, 790, 800, 10);
-    // create_border(render, 0,0, 800, 10);
-    
-    // generate_point(render, 5, 5, 4); // not even a full circle just an approximation
-    //generate_arrow(render, 0.0,400.0,0.0,400.0); //x1,y1,x2,y2
-    float velocity = 10.0;
+
+    float velocity = (PI/20);
     // SDL_Rect nr = {.x=100,.y=100,.h=30,.w=30};
     // generate_arrow(render,0.0,0.0,770.0,10.0);
     clear_scheme(render);
@@ -136,24 +122,28 @@ int main(int argc, char* argv[]) {
     float yi = 0.0;
     float max_r = 400.0;
     generate_arrow(render, xi, 0.0, max_r, 0.0);
-    // nthpos(render, &nr);
 
 
-//    SDL_Delay(4000); //<- i guess this is our t
-
-    for(int i=0; i < 10; i++) {
-        float transform[2] = {0};
-        move(transform, &xi, &yi, velocity);
-        // clear_scheme(render);
-        generate_arrow(render, 0.0, 0.0, max_r + transform[0], transform[1]);
-        printf("xi is %f and yi is %f", xi, yi);
-        // SDL_Delay(100);
-    }
-    // clear_scheme(render);
-    // generate_arrow(render,)
-    // nthpos(render, &nr);
+    // for(int i=0; i < 10; i++) {
+    //     float transform[2] = {0};
+    //     // clear_scheme(render);
+    //     generate_arrow(render, 0.0, 0.0, max_r*cos(xi), max_r*sin(yi));
+    //     move(transform, &xi, &yi, velocity);
+    //     printf("xi is %f and yi is %f", xi, yi);
+    //     // SDL_Delay(100);
+    // }
 
     SDL_RenderPresent(render);
+
+    struct matrix m1;
+    rotation_matrix rm1;
+    float typee = (PI/2);
+    // m1.rm->theta = &typee;
+    // m1->rm.theta = typee;
+    m1.rm = &rm1;
+    m1.rm->theta = typee;
+    populate(m1);
+
     bool exit = false;
     while(!exit) {
         SDL_Event event;
@@ -168,10 +158,12 @@ int main(int argc, char* argv[]) {
                 break;
             }
         }
-        // nr.x += velocity;
-        // clear_scheme(render);
-        // nthpos(render, &nr);
+        generate_arrow(render, 0.0, 0.0, max_r*cos(xi), max_r*sin(yi));
+        move(&xi, &yi, velocity);
+        SDL_RenderPresent(render);
+        SDL_Delay(10000/10);
     }
-
+    SDL_DestroyRenderer(render);
+    SDL_DestroyWindow(win);
     return 0;
 }

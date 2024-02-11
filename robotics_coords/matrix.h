@@ -1,20 +1,27 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
 
 #ifndef MATRIX_H
 #define MATRIX_H
 
-struct rotation_matrix {
-	 double m[2][2];
-}
-struct rotation_matrix populate(float theta) {
-	struct rotation_matrix init;
-	init.m[0][0] = cos(theta);
-	init.m[1][0] = sin(theta);
-	init.m[0][1] = -sin(theta);
-	init.m[1][1] = cos(theta);
-	return init;
-}
+const int init_size = 0;
+
+typedef struct {
+	float theta;
+	float rotater[2][2];// = {{cos(*theta), -sin(*theta)}, {cos(*theta), sin(*theta)}};
+} rotation_matrix;
+
+struct matrix {
+	rotation_matrix *rm;
+};
 
 
-#endif MATRIX_H
+void populate(struct matrix m) {
+	if(m.rm != NULL) {
+		printf("all valid thus far\n");
+	}
+}
+//int size_r, bool is_square, int col=NULL, float theta=NULL
+
+#endif
