@@ -125,11 +125,7 @@ int main(int argc, char* argv[]) {
     // SDL_RenderPresent(render);
 
     struct matrix* m1 = new_matrix(2, 2);
-    // m1.rm = &rm1;
-    // m1.rm->theta = typee;
-    // populate(m1, m1.rows, m1.cols);
-    populate(m1);
-    //print_matrix(m1);
+    print_matrix(m1);
 
     bool exit = false;
     while(!exit) {
