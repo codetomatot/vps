@@ -162,6 +162,8 @@ int main(int argc, char* argv[]) {
         move(&xi, &yi, velocity);
         SDL_RenderPresent(render);
         SDL_Delay(10000/10);
+        SDL_SetRenderDrawColor(render, 0x00,0x00,0x00,(0xff)-1);
+        SDL_RenderClear(render);
     }
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(win);
