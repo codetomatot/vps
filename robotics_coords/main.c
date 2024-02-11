@@ -67,7 +67,6 @@ void generate_point(SDL_Renderer* r, int32_t x_c, int32_t y_c, int32_t radius) {
         }
     }
     //i know it looks ugly but truly this algorithm works in about 500ms
-    //probably will be even faster with predfined 40 digits of pi and some trig
 }
 
 double generate_arrow(SDL_Renderer* r, double x1, double y1, double x2, double y2) {
@@ -116,23 +115,21 @@ int main(int argc, char* argv[]) {
     SDL_RenderClear(render);
     SDL_RenderPresent(render);
 
-    float velocity = (PI/20);
-    clear_scheme(render);
-    float xi = 0.0;
-    float yi = 0.0;
-    float max_r = 400.0;
-    generate_arrow(render, xi, 0.0, max_r, 0.0);
+    // float velocity = (PI/20);
+    // clear_scheme(render);
+    // float xi = 0.0;
+    // float yi = 0.0;
+    // float max_r = 400.0;
+    // generate_arrow(render, xi, 0.0, max_r, 0.0);
 
-    SDL_RenderPresent(render);
+    // SDL_RenderPresent(render);
 
-    struct matrix m1;
-    rotation_matrix rm1;
-    float typee = (PI/2);
-    // m1.rm->theta = &typee;
-    // m1->rm.theta = typee;
-    m1.rm = &rm1;
-    m1.rm->theta = typee;
+    struct matrix* m1 = new_matrix(2, 2);
+    // m1.rm = &rm1;
+    // m1.rm->theta = typee;
+    // populate(m1, m1.rows, m1.cols);
     populate(m1);
+    //print_matrix(m1);
 
     bool exit = false;
     while(!exit) {
@@ -148,15 +145,15 @@ int main(int argc, char* argv[]) {
                 break;
             }
         }
-        double gta = generate_arrow(render, 0.0, 0.0, max_r*cos(xi), max_r*sin(yi));
-        if(gta >= (PI/2)) {
-            xi = 0.0; yi = 0.0;
-        }
-        move(&xi, &yi, velocity);
-        SDL_RenderPresent(render);
-        SDL_Delay(10000/60);
-        SDL_SetRenderDrawColor(render, 0x00,0x00,0x00,0xff);
-        SDL_RenderClear(render);
+        // double gta = generate_arrow(render, 0.0, 0.0, max_r*cos(xi), max_r*sin(yi));
+        // if(gta >= (PI/2)) {
+        //     xi = 0.0; yi = 0.0;
+        // }
+        // move(&xi, &yi, velocity);
+        // SDL_RenderPresent(render);
+        // SDL_Delay(1000/10);
+        // SDL_SetRenderDrawColor(render, 0x00,0x00,0x00,0xff);
+        // SDL_RenderClear(render);
     }
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(win);
