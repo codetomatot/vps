@@ -5,6 +5,8 @@ C malloc be like:
 pi sources (not 40 digits that is acutally bad):
 https://www.jpl.nasa.gov/edu/news/2016/3/16/how-many-decimals-of-pi-do-we-really-need/
 
+https://math.libretexts.org/Bookshelves/Applied_Mathematics/Mathematics_for_Game_Developers_(Burzynski)/04%3A_Matrices/4.04%3A_Rotation_Matrices_in_2-Dimensions
+
 Math proofs and derivations here:
 
 angle between absolute x-axis and any vector
