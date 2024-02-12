@@ -127,14 +127,12 @@ int main(int argc, char* argv[]) {
     SDL_RenderClear(render);
     SDL_RenderPresent(render);
 
-    // float velocity = (PI/20);
-    // clear_scheme(render);
-    // float xi = 0.0;
-    // float yi = 0.0;
-    // float max_r = 400.0;
-    // generate_arrow(render, xi, 0.0, max_r, 0.0);
-
-    // SDL_RenderPresent(render);
+    SDL_Surface* surface = SDL_LoadBMP("image.bmp");
+    if(!surface)
+        printf("not getting surface??");
+    SDL_Texture* txt = SDL_CreateTextureFromSurface(render, surface);
+    if(!txt)
+        printf("erorr gettting texture");
 
     //matrix stuff 
     // float angle = PI;
@@ -145,12 +143,8 @@ int main(int argc, char* argv[]) {
     /*
     setup initial coordinate orientation relative of robot
     */
-
-
-    SDL_Rect rect = {.x=400,.y=400,.h=40,.w=40};
-    // SDL_Point* center;
-    // center->x=(rect.x+(rect.w/2)); 
-    // center->y=(rect.y-(rect.y/2));
+    SDL_Rect rect = {.x=200,.y=200,.h=40,.w=40};
+    // SDL_Point center= {.x=(rect.w/2), .y=rect.y/2};
     // // SDL_SetRenderDrawColor(render, 105,105,105,255);
     // SDL_RenderDrawRect(render, &rect);
     // SDL_RenderFillRect(render, &rect);
@@ -167,19 +161,11 @@ int main(int argc, char* argv[]) {
 
     // float angle = (PI/4);
     // SDL_RenderCopyEx(render, txt, NULL, &rect, angle, center, SDL_FLIP_NONE);
-    SDL_Surface* surface = SDL_LoadBMP("image.bmp");
-    if(!surface)
-        printf("not getting surface??");
-    // if(surface != NULL) {
-    SDL_Texture* txt = SDL_CreateTextureFromSurface(render, surface);
-    if(!txt)
-        printf("erorr gettting texture");
-    // } 
-    SDL_Rect new_rect = {.x=450, .y=450, .w=40,.h=40};
+
     
     // SDL_RenderCopyEx(render, txt, NULL, &rect, PI, center, SDL_FLIP_NONE);
 
-
+    static int angle=0;
     bool exit = false;
     while(!exit) {
         SDL_Event event;
@@ -206,8 +192,11 @@ int main(int argc, char* argv[]) {
         // SDL_RenderClear(render);
         SDL_SetRenderDrawColor(render, 0x00, 0x00, 0x00, 0x00);
         SDL_RenderClear(render);
-        SDL_RenderCopy(render, txt, NULL, &new_rect);
+        // SDL_RenderCopy(render, txt, NULL, &rect);
+        SDL_RenderCopyEx(render,txt,NULL,&rect,angle,NULL,SDL_FLIP_NONE);
         SDL_RenderPresent(render);
+        angle++;
+        SDL_Delay(1000/30);
     }
     // free(m1); //uncomment when running matrices computation
     SDL_DestroyTexture(txt);
