@@ -9,8 +9,8 @@
 #include "matrix.h"
 
 #define PI 3.141592653589793
-#define WINDOW_HEIGHT 800
-#define WINDOWN_WIDTH 800
+#define WINDOW_HEIGHT 500
+#define WINDOWN_WIDTH 700
 
 struct bottom_left {
     float xn;
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
         printf("eror init sdl");
         exit(1);
     }
-    SDL_Window* win = SDL_CreateWindow("Example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, 0); //turns out top left corner is origin (0,0)
+    SDL_Window* win = SDL_CreateWindow("Example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOWN_WIDTH, WINDOW_HEIGHT, 0); //turns out top left corner is origin (0,0)
     SDL_Renderer* render = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor(render,0,0,0,255);
     SDL_RenderClear(render);
@@ -149,13 +149,10 @@ int main(int argc, char* argv[]) {
     int p[3] =      {0xff,0xc0,0xcb};
     int orange[3] = {0xff,0xa5,0x00};
 
-    SDL_SetRenderDrawColor(render, 0x00, 0x00, 0x00, 0x00);
-    SDL_RenderClear(render);
-    SDL_RenderCopyEx(render,txt,NULL,&rect,90,NULL,SDL_FLIP_NONE);
-    // SDL_RenderCopy(render, txt, NULL, &rect);
-    generate_arrow(render, 0,0,rect.x+(rect.w/2),(WINDOW_HEIGHT-(rect.y+(rect.h/2))), true, g);
-    generate_arrow(render, rect.x+(rect.w/2), (WINDOW_HEIGHT-(rect.y+(rect.h/2))), rect.x+(rect.w/2), WINDOW_HEIGHT-(rect.y+(rect.h/2))+60, false, p); //y-axis
-    generate_arrow(render, rect.x+(rect.w/2), (WINDOW_HEIGHT-(rect.y+(rect.h/2))), rect.x+60, (WINDOW_HEIGHT-(rect.y+(rect.h/2))), false, orange); //x-axis
+    float curr_y = WINDOW_HEIGHT-(rect.y+(rect.h/2)); //center of square with respect to origin bl
+    float curr_x = rect.x+(rect.w/2); //center of square 
+    const float magnitude_of_yaxis = sqrt(pow(curr_x,2)+pow(curr_y,2));
+    const float magnitude_of_xaxis = sqrt(pow(curr_x,2)+pow(curr_y,2));
 
     SDL_RenderPresent(render);
 
@@ -174,9 +171,25 @@ int main(int argc, char* argv[]) {
                 break;
             }
         }
+        // create_border(render, 0, 0, 10, 800);
+        float new_x = (curr_x)*cos(-((angle*PI)/180)) - (curr_y)*sin(-((angle*PI)/180));
+        float new_y = (curr_x)*sin(-((angle*PI)/180)) + (curr_y)*cos(-((angle*PI)/180));
+
+        SDL_SetRenderDrawColor(render, 0x00, 0x00, 0x00, 0x00);
+    SDL_RenderClear(render);
+    SDL_RenderCopyEx(render,txt,NULL,&rect,angle,NULL,SDL_FLIP_NONE);
+    // SDL_RenderCopy(render, txt, NULL, &rect);
+    generate_arrow(render, 0,0,rect.x+(rect.w/2),WINDOW_HEIGHT-(rect.y+(rect.h/2)), true, g);
+    generate_arrow(render, rect.x+(rect.w/2), WINDOW_HEIGHT-(rect.y+(rect.h/2)), curr_x,curr_y, false, p); //y-axis
+    // generate_arrow(render, curr_x, curr_y, rect.x+60, curr_y, false, orange); //x-axis
+        SDL_RenderPresent(render); 
+        angle++;
+
+        // printf("current magnitude_y: %.2f. current mag_x: %.2f\n", magnitude_of_yaxis, magnitude_of_xaxis); //should be constants
+        printf("current new_x: %.2f. current new_y: %.2f\n", new_x, new_y);
         
-        // angle++;
-        // SDL_Delay(1000/30);
+        SDL_Delay(10000/10);
+        // SDL_Quit();
     }
     // free(m1); //uncomment when running matrices computation
     SDL_DestroyTexture(txt);
@@ -184,3 +197,12 @@ int main(int argc, char* argv[]) {
     SDL_DestroyWindow(win);
     return 0;
 }
+
+/*
+important dimensional information:
+
+width: 47.124 something
+length: 92.25 something
+
+
+*/
