@@ -83,14 +83,14 @@ double generate_arrow(SDL_Renderer* r, float x1, float y1, float x2, float y2, b
     float left = PI + (phi/2.0);
     float right = PI + (3.0*phi/2.0);
     
-    printf("phi is %f \n", phi);
+    // printf("phi is %f \n", phi);
 
     // SDL_SetRenderDrawColor(r, 0,255,0,255);
     render_color(r, color);
     SDL_RenderDrawLine(r,x1,convert_coords(x1,y1).yn,x2,y_t);
     // SDL_SetRenderDrawColor(r, 0,0,255,255);
     if(crt) {
-        SDL_SetRenderDrawColor(r, 0,0,255,255);
+        SDL_SetRenderDrawColor(r, 255,0,0,255);
         // render_color(r, color);
         SDL_RenderDrawLine(r,x2, y_t, (x2 + (c*cos(left))), (y_t - (c*sin(left))));
         SDL_RenderDrawLine(r,x2,y_t, x2 + (c*cos(right)), y_t - (c*sin(right)));
@@ -144,26 +144,20 @@ int main(int argc, char* argv[]) {
     setup initial coordinate orientation relative of robot
     */
     SDL_Rect rect = {.x=200,.y=200,.h=40,.w=40};
-    // SDL_Point center= {.x=(rect.w/2), .y=rect.y/2};
-    // // SDL_SetRenderDrawColor(render, 105,105,105,255);
-    // SDL_RenderDrawRect(render, &rect);
-    // SDL_RenderFillRect(render, &rect);
-    // // SDL_SetRenderDrawColor(render, 0,0,0,255);
 
-    // int g[3] =      {0x00,0xff,0x00};
-    // int p[3] =      {0xff,0xc0,0xcb};
-    // int orange[3] = {0xff,0xa5,0x00};
-    // generate_arrow(render, 0,0,rect.x+(rect.w/2),rect.y-(rect.h/2), true, g);
+    int g[3] =      {0x00,0xff,0x00};
+    int p[3] =      {0xff,0xc0,0xcb};
+    int orange[3] = {0xff,0xa5,0x00};
 
-    // generate_arrow(render, rect.x+(rect.w/2), rect.y-(rect.h/2), rect.x+(rect.w/2), rect.y+30, false, p); //y-axis
+    SDL_SetRenderDrawColor(render, 0x00, 0x00, 0x00, 0x00);
+    SDL_RenderClear(render);
+    SDL_RenderCopyEx(render,txt,NULL,&rect,90,NULL,SDL_FLIP_NONE);
+    // SDL_RenderCopy(render, txt, NULL, &rect);
+    generate_arrow(render, 0,0,rect.x+(rect.w/2),(WINDOW_HEIGHT-(rect.y+(rect.h/2))), true, g);
+    generate_arrow(render, rect.x+(rect.w/2), (WINDOW_HEIGHT-(rect.y+(rect.h/2))), rect.x+(rect.w/2), WINDOW_HEIGHT-(rect.y+(rect.h/2))+60, false, p); //y-axis
+    generate_arrow(render, rect.x+(rect.w/2), (WINDOW_HEIGHT-(rect.y+(rect.h/2))), rect.x+60, (WINDOW_HEIGHT-(rect.y+(rect.h/2))), false, orange); //x-axis
 
-    // generate_arrow(render, rect.x+(rect.w/2), rect.y-(rect.h/2), rect.x+60, rect.y-(rect.h/2), false, orange); //x-axis
-
-    // float angle = (PI/4);
-    // SDL_RenderCopyEx(render, txt, NULL, &rect, angle, center, SDL_FLIP_NONE);
-
-    
-    // SDL_RenderCopyEx(render, txt, NULL, &rect, PI, center, SDL_FLIP_NONE);
+    SDL_RenderPresent(render);
 
     static int angle=0;
     bool exit = false;
@@ -181,22 +175,8 @@ int main(int argc, char* argv[]) {
             }
         }
         
-        // double gta = generate_arrow(render, 0.0, 0.0, max_r*cos(xi), max_r*sin(yi));
-        // if(gta >= (PI/2)) {
-        //     xi = 0.0; yi = 0.0;
-        // }
-        // move(&xi, &yi, velocity);
-        // SDL_RenderPresent(render);
-        // SDL_Delay(1000/10);
-        // SDL_SetRenderDrawColor(render, 0x00,0x00,0x00,0xff);
-        // SDL_RenderClear(render);
-        SDL_SetRenderDrawColor(render, 0x00, 0x00, 0x00, 0x00);
-        SDL_RenderClear(render);
-        // SDL_RenderCopy(render, txt, NULL, &rect);
-        SDL_RenderCopyEx(render,txt,NULL,&rect,angle,NULL,SDL_FLIP_NONE);
-        SDL_RenderPresent(render);
-        angle++;
-        SDL_Delay(1000/30);
+        // angle++;
+        // SDL_Delay(1000/30);
     }
     // free(m1); //uncomment when running matrices computation
     SDL_DestroyTexture(txt);
