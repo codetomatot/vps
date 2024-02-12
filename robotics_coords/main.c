@@ -4,6 +4,8 @@
 //#include <kipr/wombat.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_image.h>
+#include <limits.h>
 #include "matrix.h"
 
 #define PI 3.141592653589793
@@ -21,6 +23,11 @@ struct bottom_left convert_coords(float x, float y) {
     return hp;
 }
 
+char optlookup[2] = "ri";
+
+void render_color(SDL_Renderer* r, int* c) {
+    SDL_SetRenderDrawColor(r, c[0], c[1], c[2], 255);
+}
 
 void create_border(SDL_Renderer* r, int xpos, int ypos, int w, int h) {
     SDL_Rect border;
@@ -69,20 +76,25 @@ void generate_point(SDL_Renderer* r, int32_t x_c, int32_t y_c, int32_t radius) {
     //i know it looks ugly but truly this algorithm works in about 500ms
 }
 
-double generate_arrow(SDL_Renderer* r, double x1, double y1, double x2, double y2) {
+double generate_arrow(SDL_Renderer* r, float x1, float y1, float x2, float y2, bool crt, int* color) {
     float y_t = convert_coords(x2,y2).yn;
     int c = 20; //arbitrarily set magnitude of a line
-    double phi = acos(x2 / sqrt((pow(x2,2.0) + pow(y2,2.0))) );
+    double phi = acos(x2 / (sqrt((pow(x2,2.0) + pow(y2,2.0)))) );
     float left = PI + (phi/2.0);
     float right = PI + (3.0*phi/2.0);
     
     printf("phi is %f \n", phi);
 
-    SDL_SetRenderDrawColor(r, 0,255,0,255);
+    // SDL_SetRenderDrawColor(r, 0,255,0,255);
+    render_color(r, color);
     SDL_RenderDrawLine(r,x1,convert_coords(x1,y1).yn,x2,y_t);
-    SDL_SetRenderDrawColor(r, 255,0,0,255);
-    SDL_RenderDrawLine(r,x2, y_t, (x2 + (c*cos(left))), (y_t - (c*sin(left))));
-    SDL_RenderDrawLine(r,x2,y_t, x2 + (c*cos(right)), y_t - (c*sin(right)));
+    // SDL_SetRenderDrawColor(r, 0,0,255,255);
+    if(crt) {
+        SDL_SetRenderDrawColor(r, 0,0,255,255);
+        // render_color(r, color);
+        SDL_RenderDrawLine(r,x2, y_t, (x2 + (c*cos(left))), (y_t - (c*sin(left))));
+        SDL_RenderDrawLine(r,x2,y_t, x2 + (c*cos(right)), y_t - (c*sin(right)));
+    }
 
     return phi;
 }
@@ -123,13 +135,50 @@ int main(int argc, char* argv[]) {
     // generate_arrow(render, xi, 0.0, max_r, 0.0);
 
     // SDL_RenderPresent(render);
-    char id= 'r';
-    char id2 ='i';
-    float angle = PI;
-    struct matrix* m1 = new_matrix(2, 2, &id, &angle);
-    struct matrix* m2 = new_matrix(2, 2, &id2, NULL);
-    confirm_transform2d(m1, m2);
-    // print_matrix(m1);
+
+    //matrix stuff 
+    // float angle = PI;
+    // struct matrix* m1 = new_matrix(2, 2, &(optlookup[0]), &angle);
+    // struct matrix* m2 = new_matrix(2, 2, &(optlookup[1]), NULL);
+    // confirm_transform2d(m1, m2);
+
+    /*
+    setup initial coordinate orientation relative of robot
+    */
+
+
+    SDL_Rect rect = {.x=400,.y=400,.h=40,.w=40};
+    // SDL_Point* center;
+    // center->x=(rect.x+(rect.w/2)); 
+    // center->y=(rect.y-(rect.y/2));
+    // // SDL_SetRenderDrawColor(render, 105,105,105,255);
+    // SDL_RenderDrawRect(render, &rect);
+    // SDL_RenderFillRect(render, &rect);
+    // // SDL_SetRenderDrawColor(render, 0,0,0,255);
+
+    // int g[3] =      {0x00,0xff,0x00};
+    // int p[3] =      {0xff,0xc0,0xcb};
+    // int orange[3] = {0xff,0xa5,0x00};
+    // generate_arrow(render, 0,0,rect.x+(rect.w/2),rect.y-(rect.h/2), true, g);
+
+    // generate_arrow(render, rect.x+(rect.w/2), rect.y-(rect.h/2), rect.x+(rect.w/2), rect.y+30, false, p); //y-axis
+
+    // generate_arrow(render, rect.x+(rect.w/2), rect.y-(rect.h/2), rect.x+60, rect.y-(rect.h/2), false, orange); //x-axis
+
+    // float angle = (PI/4);
+    // SDL_RenderCopyEx(render, txt, NULL, &rect, angle, center, SDL_FLIP_NONE);
+    SDL_Surface* surface = SDL_LoadBMP("image.bmp");
+    if(!surface)
+        printf("not getting surface??");
+    // if(surface != NULL) {
+    SDL_Texture* txt = SDL_CreateTextureFromSurface(render, surface);
+    if(!txt)
+        printf("erorr gettting texture");
+    // } 
+    SDL_Rect new_rect = {.x=450, .y=450, .w=40,.h=40};
+    
+    // SDL_RenderCopyEx(render, txt, NULL, &rect, PI, center, SDL_FLIP_NONE);
+
 
     bool exit = false;
     while(!exit) {
@@ -145,6 +194,7 @@ int main(int argc, char* argv[]) {
                 break;
             }
         }
+        
         // double gta = generate_arrow(render, 0.0, 0.0, max_r*cos(xi), max_r*sin(yi));
         // if(gta >= (PI/2)) {
         //     xi = 0.0; yi = 0.0;
@@ -154,8 +204,13 @@ int main(int argc, char* argv[]) {
         // SDL_Delay(1000/10);
         // SDL_SetRenderDrawColor(render, 0x00,0x00,0x00,0xff);
         // SDL_RenderClear(render);
+        SDL_SetRenderDrawColor(render, 0x00, 0x00, 0x00, 0x00);
+        SDL_RenderClear(render);
+        SDL_RenderCopy(render, txt, NULL, &new_rect);
+        SDL_RenderPresent(render);
     }
-    free(m1);
+    // free(m1); //uncomment when running matrices computation
+    SDL_DestroyTexture(txt);
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(win);
     return 0;
