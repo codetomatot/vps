@@ -7,6 +7,10 @@ https://www.jpl.nasa.gov/edu/news/2016/3/16/how-many-decimals-of-pi-do-we-really
 
 https://math.libretexts.org/Bookshelves/Applied_Mathematics/Mathematics_for_Game_Developers_(Burzynski)/04%3A_Matrices/4.04%3A_Rotation_Matrices_in_2-Dimensions
 
+once more trying to fix the rotations:
+![image](https://github.com/codetomatot/vps/assets/75332544/86d96864-aa20-4f14-930d-34c54abfef14)
+
+
 Math proofs and derivations here:
 
 angle between absolute x-axis and any vector
