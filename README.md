@@ -51,3 +51,4 @@ A_x' \\ A_y'
 A_x \\ A_y
 \end{bmatrix}
 ```
+![image](https://github.com/codetomatot/vps/assets/75332544/343ec17c-39df-4797-9f5b-7aaa1a7c5334)
