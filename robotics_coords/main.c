@@ -104,12 +104,17 @@ double* generate_arrow(SDL_Renderer* r, double* buffer,float x1, float y1, float
         buffer[1] = y1;
         buffer[2] = x2;
         buffer[3] = y2;
+        return buffer;
+    } else {
+        double* failsafe_buf = (double*)malloc(sizeof(double)*4);
+        failsafe_buf[0] = x1; failsafe_buf[1] = y1; failsafe_buf[2] = x2; failsafe_buf[3] = y2;
+        return failsafe_buf;
     }
 
-    return buffer;
 }
-void nonorigin_rotate(SDL_Renderer* render, float angle, float x1, float y1, float curr_x, float curr_y) {
-    double transform[4] = {0};
+double* nonorigin_rotate(SDL_Renderer* render, float angle, float x1, float y1, float curr_x, float curr_y) {
+    // double transform[4];
+    double* transform = (double*)malloc(sizeof(double)*4);
     generate_arrow(render, transform, x1, y1, curr_x, curr_y, true, g);
     //translate to origin
     transform[2] -= transform[0];
@@ -121,7 +126,16 @@ void nonorigin_rotate(SDL_Renderer* render, float angle, float x1, float y1, flo
     transform[2] = new_x + transform[0];
     transform[3] = new_y + transform[1];
 
-    generate_arrow(render, NULL, x1, y1, transform[2], transform[3], false, g);
+    generate_arrow(render, NULL, x1, y1, transform[2], transform[3], true, orange);
+    // generate_arrow(render, transform, x1, y1, transform[2], transform[3], true, orange);
+
+    return transform;
+}
+float spec_angle(double* v1, double* v2, float curr_x, float curr_y) {
+    return acos(
+        ( (*(v1+2)-curr_x)*(*(v2+2)-curr_x) + ((*(v1+3)-curr_y)*(*(v2+3)-curr_y)) ) / 
+        ( sqrt(pow(*(v1+2)-curr_x,2)+pow(*(v1+3)-curr_y,2)) * sqrt( pow(*(v2+2)-curr_x,2) + pow(*(v2+3)-curr_y,2)) )
+    );
 }
 
 void clear_scheme(SDL_Renderer* render) {
@@ -129,6 +143,9 @@ void clear_scheme(SDL_Renderer* render) {
     SDL_RenderClear(render);
     SDL_RenderPresent(render);
 }
+
+// void bias_algorithm()
+
 
 
 int main(int argc, char* argv[]) {
@@ -183,10 +200,13 @@ int main(int argc, char* argv[]) {
                     rect.y += 2;
                 }
                 if(event.key.keysym.sym == SDLK_LEFT) {
-                    rect.x -= 2;
+                    rect.x -= 2;    
                 }
                 if(event.key.keysym.sym == SDLK_RIGHT) {
                     rect.x += 2;
+                }
+                if(event.key.keysym.sym ==0x74) {
+                    angle += 30;
                 }
                 break;
             case SDL_KEYUP:
@@ -198,33 +218,37 @@ int main(int argc, char* argv[]) {
         float curr_y = WINDOW_HEIGHT-(rect.y+(rect.h/2)); //center of square with respect to origin bl
         float curr_x = rect.x+(rect.w/2); //center of square 
 
-        printf("distance to target 1: %f where currx is %f and curry is %f\n", (sqrt(pow(660-curr_x,2)+pow(240-curr_y,2))), curr_x, curr_y);
-        //below works
-        // SDL_SetRenderDrawColor(render,0x00,0x00,0x00,0xff);
-        // SDL_RenderClear(render);
-        // SDL_RenderCopyEx(render, txt, NULL, &rect, -angle, NULL, SDL_FLIP_NONE);
-        // nonorigin_rotate(render, (PI*angle)/180, curr_x,curr_y, curr_x,curr_y+60);
-        // SDL_RenderPresent(render);
-        // angle+=30;
-        // SDL_Delay(1000/30);
+        // printf("distance to target 1: %f where currx is %f and curry is %f\r", (sqrt(pow(660-curr_x,2)+pow(240-curr_y,2))), curr_x, curr_y);
+
         SDL_SetRenderDrawColor(render,0,0,0,255);
         SDL_RenderClear(render);
         //initials
-        SDL_RenderCopy(render, txt, NULL, &rect);
-        
-        
+        SDL_RenderCopyEx(render, txt, NULL, &rect, -angle, NULL, SDL_FLIP_NONE);
+        double* v1 = nonorigin_rotate(render, (PI*angle)/180, curr_x,curr_y, curr_x,curr_y+60);
+
         //targets for example
         create_rect(render, 650, 250, 20,20);
         create_rect(render, 650, 450, 20,20);
         create_rect(render, 650, 50, 20,20);
 
         //draw optimal path vectors
-        generate_arrow(render,NULL,curr_x,curr_y,650+(10),250-(10),true,g);
+        double* v2 = generate_arrow(render,NULL,curr_x,curr_y,650+(10),250-(10),true,g);
         generate_arrow(render,NULL,curr_x,curr_y,650+10,450-10,true,g);
         generate_arrow(render,NULL,curr_x,curr_y,650+10,50-10,true,g);
+        // printf("sum yeeyee: %f", *v2);
+
+        // printf("angle: %f", spec_angle(v1,v2,curr_x,curr_y));
+        float mfer = spec_angle(v1,v2,curr_x,curr_y);
+        printf("the angle between shrek and the ground necessary to successfully launch into the tower keeping fiona: %f\r", mfer);
+        if(*(v1+3) <= (curr_y+60) && *(v1+3) > curr_y) {
+            printf("\ndo da clockwise\n");
+        } else {
+            printf("do counterclockwise\n");
+        }
 
         SDL_RenderPresent(render);
-
+        free(v1);
+        free(v2);
         SDL_Delay(1000/30);
 
     }
