@@ -12,6 +12,8 @@
 #define WINDOW_HEIGHT 500
 #define WINDOWN_WIDTH 700
 
+
+
 struct bottom_left {
     float xn;
     float yn;
@@ -32,7 +34,7 @@ void render_color(SDL_Renderer* r, int* c) {
     SDL_SetRenderDrawColor(r, c[0], c[1], c[2], 255);
 }
 
-void create_border(SDL_Renderer* r, int xpos, int ypos, int w, int h) {
+void create_rect(SDL_Renderer* r, int xpos, int ypos, int w, int h) {
     SDL_Rect border;
     border.x = xpos;
     border.y = ypos;
@@ -108,7 +110,7 @@ double* generate_arrow(SDL_Renderer* r, double* buffer,float x1, float y1, float
 }
 void nonorigin_rotate(SDL_Renderer* render, float angle, float x1, float y1, float curr_x, float curr_y) {
     double transform[4] = {0};
-    double* init = generate_arrow(render, transform, x1, y1, curr_x, curr_y, true, g);
+    generate_arrow(render, transform, x1, y1, curr_x, curr_y, true, g);
     //translate to origin
     transform[2] -= transform[0];
     transform[3] -= transform[1];
@@ -116,7 +118,6 @@ void nonorigin_rotate(SDL_Renderer* render, float angle, float x1, float y1, flo
     float new_x = transform[2]*cos(angle) - transform[3]*sin(angle);
     float new_y = transform[2]*sin(angle) + transform[3]*cos(angle);
 
-    //translate back to 50,50 transform[0],transform[1]
     transform[2] = new_x + transform[0];
     transform[3] = new_y + transform[1];
 
@@ -129,11 +130,6 @@ void clear_scheme(SDL_Renderer* render) {
     SDL_RenderPresent(render);
 }
 
-void move(float* x, float* y, float v) { //buffer, 0,0,10
-    *x += v; *y += v;
-    // buffer[0] = *x;
-    // buffer[1] = *y;
-}
 
 int main(int argc, char* argv[]) {
     uint32_t flags = 0;
@@ -151,38 +147,26 @@ int main(int argc, char* argv[]) {
     SDL_RenderClear(render);
     SDL_RenderPresent(render);
 
-    SDL_Surface* surface = SDL_LoadBMP("image.bmp");
+    SDL_Surface* surface = SDL_LoadBMP("shrek.bmp");
+    SDL_Color white = {.r=255,.b=255,.g=255};
     if(!surface)
         printf("not getting surface??");
     SDL_Texture* txt = SDL_CreateTextureFromSurface(render, surface);
     if(!txt)
         printf("erorr gettting texture");
 
-    //matrix stuff 
-    // float angle = PI;
-    // struct matrix* m1 = new_matrix(2, 2, &(optlookup[0]), &angle);
-    // struct matrix* m2 = new_matrix(2, 2, &(optlookup[1]), NULL);
-    // confirm_transform2d(m1, m2);
-
-    /*
-    setup initial coordinate orientation relative of robot
-    */
-    SDL_Rect rect = {.x=200,.y=200,.h=40,.w=40};
-
-
-    float curr_y = WINDOW_HEIGHT-(rect.y+(rect.h/2)); //center of square with respect to origin bl
-    float curr_x = rect.x+(rect.w/2); //center of square 
-    //init
-    // nonorigin_rotate(render, (PI), 50,50,curr_x,curr_y);
-
-    //nonorigin_rotate(render, 0, curr_x,curr_y,curr_x,curr_y+60);
-    //nonorigin_rotate(render, (PI/6), curr_x,curr_y,curr_x,curr_y+60); //render, angle, originx, originy, lineend1,lineend2
-
-
+    SDL_Rect rect = {.x=20,.y=460,.h=40,.w=40};
+    SDL_Rect msgrect = {.x=20,.y=50,.h=30,.w=120};
+    
     SDL_RenderPresent(render);
 
+    //setup points for targets
+    // generate_point(render, 350, 250, 8);
+
     static int angle=0;
+
     bool exit = false;
+    printf("ah yes, the path to the swamp has been found\n");
     while(!exit) {
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
@@ -191,17 +175,56 @@ int main(int argc, char* argv[]) {
             case SDL_QUIT:
                 exit = true;
                 break;
-            
+            case SDL_KEYDOWN:
+                if(event.key.keysym.sym == SDLK_UP) {
+                    rect.y -= 2;
+                }
+                if(event.key.keysym.sym == SDLK_DOWN) {
+                    rect.y += 2;
+                }
+                if(event.key.keysym.sym == SDLK_LEFT) {
+                    rect.x -= 2;
+                }
+                if(event.key.keysym.sym == SDLK_RIGHT) {
+                    rect.x += 2;
+                }
+                break;
+            case SDL_KEYUP:
+                break;
             default:
                 break;
             }
         }
-        SDL_SetRenderDrawColor(render,0x00,0x00,0x00,0xff);
+        float curr_y = WINDOW_HEIGHT-(rect.y+(rect.h/2)); //center of square with respect to origin bl
+        float curr_x = rect.x+(rect.w/2); //center of square 
+
+        printf("distance to target 1: %f where currx is %f and curry is %f\n", (sqrt(pow(660-curr_x,2)+pow(240-curr_y,2))), curr_x, curr_y);
+        //below works
+        // SDL_SetRenderDrawColor(render,0x00,0x00,0x00,0xff);
+        // SDL_RenderClear(render);
+        // SDL_RenderCopyEx(render, txt, NULL, &rect, -angle, NULL, SDL_FLIP_NONE);
+        // nonorigin_rotate(render, (PI*angle)/180, curr_x,curr_y, curr_x,curr_y+60);
+        // SDL_RenderPresent(render);
+        // angle+=30;
+        // SDL_Delay(1000/30);
+        SDL_SetRenderDrawColor(render,0,0,0,255);
         SDL_RenderClear(render);
-        SDL_RenderCopyEx(render, txt, NULL, &rect, -angle, NULL, SDL_FLIP_NONE);
-        nonorigin_rotate(render, (PI*angle)/180, curr_x,curr_y, curr_x,curr_y+60);
+        //initials
+        SDL_RenderCopy(render, txt, NULL, &rect);
+        
+        
+        //targets for example
+        create_rect(render, 650, 250, 20,20);
+        create_rect(render, 650, 450, 20,20);
+        create_rect(render, 650, 50, 20,20);
+
+        //draw optimal path vectors
+        generate_arrow(render,NULL,curr_x,curr_y,650+(10),250-(10),true,g);
+        generate_arrow(render,NULL,curr_x,curr_y,650+10,450-10,true,g);
+        generate_arrow(render,NULL,curr_x,curr_y,650+10,50-10,true,g);
+
         SDL_RenderPresent(render);
-        angle+=30;
+
         SDL_Delay(1000/30);
 
     }
@@ -209,6 +232,7 @@ int main(int argc, char* argv[]) {
     SDL_DestroyTexture(txt);
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(win);
+    SDL_Quit();
     return 0;
 }
 

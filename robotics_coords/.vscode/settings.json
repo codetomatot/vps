@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "ranges": "c",
-        "optional": "c"
+        "optional": "c",
+        "compare": "c",
+        "cstdint": "c"
     }
 }

@@ -1,1 +1,1 @@
-gcc main.c $(pkg-config --cflags --libs sdl2) -lm -lSDL2 -lSDL2_image -lGL -lGLU
+gcc main.c $(pkg-config --cflags --libs sdl2) -lm -lSDL2 -lSDL2_image 
