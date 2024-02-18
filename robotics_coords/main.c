@@ -266,5 +266,9 @@ important dimensional information:
 width: 47.124 something
 length: 92.25 something
 
+TODO:
+- collision awareness
+- wheel rotate
+- initial position determination (e.g initial orientation irl)
 
 */
