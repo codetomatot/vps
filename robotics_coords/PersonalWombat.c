@@ -1,21 +1,4 @@
-//SHREKMOBILE
-/*
-⢀⡴⠑⡄⠀⠀⠀⠀⠀⠀⠀⣀⣀⣤⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ 
-⠸⡇⠀⠿⡀⠀⠀⠀⣀⡴⢿⣿⣿⣿⣿⣿⣿⣿⣷⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠑⢄⣠⠾⠁⣀⣄⡈⠙⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⢀⡀⠁⠀⠀⠈⠙⠛⠂⠈⣿⣿⣿⣿⣿⠿⡿⢿⣆⠀⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⢀⡾⣁⣀⠀⠴⠂⠙⣗⡀⠀⢻⣿⣿⠭⢤⣴⣦⣤⣹⠀⠀⠀⢀⢴⣶⣆ 
-⠀⠀⢀⣾⣿⣿⣿⣷⣮⣽⣾⣿⣥⣴⣿⣿⡿⢂⠔⢚⡿⢿⣿⣦⣴⣾⠁⠸⣼⡿ 
-⠀⢀⡞⠁⠙⠻⠿⠟⠉⠀⠛⢹⣿⣿⣿⣿⣿⣌⢤⣼⣿⣾⣿⡟⠉⠀⠀⠀⠀⠀ 
-⠀⣾⣷⣶⠇⠀⠀⣤⣄⣀⡀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀ 
-⠀⠉⠈⠉⠀⠀⢦⡈⢻⣿⣿⣿⣶⣶⣶⣶⣤⣽⡹⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⠉⠲⣽⡻⢿⣿⣿⣿⣿⣿⣿⣷⣜⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣷⣶⣮⣭⣽⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⣀⣀⣈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⠿⠿⠿⠿⠛⠉
-*/
+
 #include <stdio.h>
 #include <kipr/wombat.h>
 #include <math.h>
@@ -26,19 +9,20 @@
 #define WINDOW_HEIGHT 241
 #define WINDOW_WIDTH 119.38
 
+
 struct bottom_left {
     float xn;
     float yn;
 };
 struct bottom_left convert_coords(float x, float y) {
     struct bottom_left hp;
-    hp.xn = -x + WINDOWN_WIDTH;
+    hp.xn = -x + WINDOW_WIDTH;
     hp.yn = -y + WINDOW_HEIGHT;
     return hp;
 }
 double* generate_arrow(double* buffer, float x1, float y1, float x2, float y2) { //just allocate
-    float y_t = convert_coords(x2,y2).yn;
-    double phi = acos(x2 / (sqrt((pow(x2,2.0) + pow(y2,2.0)))) );
+    //float y_t = convert_coords(x2,y2).yn;
+    //double phi = acos(x2 / (sqrt((pow(x2,2.0) + pow(y2,2.0)))) );
     
     if(buffer != NULL) {
         buffer[0] = x1;
@@ -82,19 +66,48 @@ struct rect { //robot is a rectangle bruh (everything is cm)
     float y;
     int h;
     int w;
+};
+
+
+
+
+          
+
+
+void turnLeft(double angle1){
+    mav(2, 1000);
+    mav(0, -1000);
+    msleep((1010.0/90)*angle1);
+    ao();
 }
 
-void turnLeft(double angle1);  //takes in the angle to figure out how much degrees to turn to the left
-void turnRight(double angle2);  //takes in the angle to figure out how much degrees to turn to the right
-void move(double distance);
+void turnRight(double angle2){
+    mav(2, -1000);
+    mav(0, 1000);
+    msleep((970.0/90)*angle2);
+    ao();
+}
+void move(double distance){
+    mav(2, 1500);
+    mav(0, 1500);
+    // for(float i = 0; i <= 12*3.1415926; i += (3.1415926/24)) {
+    // 	mav(l, round(-1200*cos(i)));
+    //     mav(r, round(-1200*cos(i)));
+    //     printf("%.3f", -1200*cos(i));
+    //     msleep(distance/0.00675);
+    // 	ao();
+    // }
+    msleep(distance/0.00675);
+    ao();
+}
 
-int l = 2;
-int r = 0;
-int rockPosition = 1938;
-int puffBallPosition = 1154;
+
+
+
+
 
 int main(int argc, char* argv[]) {
-    uint32_t flags = 0; 
+   // uint32_t flags = 0; 
     static int angle=0;
     struct rect robot; robot.h = 44; robot.w = 21;
     //initial postition
@@ -118,7 +131,8 @@ int main(int argc, char* argv[]) {
             printf("do counterclockwise\n");
         }
 
-        move(*(v2+3));
+        //move(*(v2+3));
+        turnLeft(mfer);
 
 
 
@@ -131,33 +145,3 @@ int main(int argc, char* argv[]) {
 }
 
 //functions 
-void move(double distance){
-    mav(l, 1500);
-    mav(r, 1500);
-    // for(float i = 0; i <= 12*3.1415926; i += (3.1415926/24)) {
-    // 	mav(l, round(-1200*cos(i)));
-    //     mav(r, round(-1200*cos(i)));
-    //     printf("%.3f", -1200*cos(i));
-    //     msleep(distance/0.00675);
-    // 	ao();
-    // }
-    msleep(distance/0.00675);
-    ao();
-}
-          
-
-
-void turnLeft(double angle1){
-    mav(l, 1000);
-    mav(r, -1000);
-    msleep((1010.0/90)*angle1);
-    ao();
-}
-
-void turnRight(double angle2){
-    mav(l, -1000);
-    mav(r, 1000);
-    msleep((970.0/90)*angle2);
-    ao();
-}
-    
