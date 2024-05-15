@@ -52,3 +52,15 @@ A_x \\ A_y
 \end{bmatrix}
 ```
 ![image](https://github.com/codetomatot/vps/assets/75332544/343ec17c-39df-4797-9f5b-7aaa1a7c5334)
+
+
+
+using cross product to determine clockwise or counterclockwise rotations e.g negative cross product is clockwise whereas positive is counterclockwise
+```math
+\det\left| \begin{bmatrix}
+\hat{i} & \hat{j} & \hat{k} \\
+x & y & 0 \\
+1 & 0 & 0
+\end{bmatrix} \right|
+\implies -y
+```
