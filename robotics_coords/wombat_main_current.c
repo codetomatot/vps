@@ -112,10 +112,12 @@ void r_move(float distance){
     ao();
 }
 void moveBack(float d){
-    mav(3, 1500);
-    mav(1, 1500);
-    msleep(d/0.017145); //previous mode 0.00675
+for(int i = 0; i<=d*1000; i+=1000){
+    mav(3, 1000);
+    mav(1, 1000);
+    
     ao();
+}
 }
 void openSorter(){
     set_servo_position(0, 1941);
@@ -139,13 +141,15 @@ int main() {
     printf("ah yes, the path to the swamp has been found\n");
     //strat
   	float init[2] = {robot.x+(robot.w/2), 18};
-    const float target_coords[6][3] = {
+    const float target_coords[7][3] = {
         {42.5,WINDOW_HEIGHT-(115),0}, //turns left initial
         {57, WINDOW_HEIGHT-(115), 1}, //turns right to get next rock
         {90, WINDOW_HEIGHT-(115), 0}, //adjust course 
-        {90, WINDOW_HEIGHT-(130), 0},
-        {42.5, WINDOW_HEIGHT-(130), 0},
-        {40, WINDOW_HEIGHT-(200), 1}
+        {90, WINDOW_HEIGHT-(130), 0}, //makes collision with the wall
+        {42.5, WINDOW_HEIGHT-(130), 0}, //refuses to ellaborate and still beats the wall
+       {42.5, WINDOW_HEIGHT-(170), 0},
+	{0,WINDOW_HEIGHT, 0},
+
     };
     enable_servos();
     set_servo_position(3, 0);
@@ -165,8 +169,12 @@ int main() {
         } else if(target_coords[i][2] == 0) {
             if(i == 5) {
             	turn_Left(2*shrek );
-            }else {
+            }else if(i==6){
+		    //open the solar panel
+		    moveBack(5);
+	    }else{
         	turn_Left(shrek);}
+	
         }
         r_move(distance_metric);
         //update init
