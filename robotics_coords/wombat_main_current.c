@@ -130,7 +130,10 @@ void closeSorter(){
 
 int main() {
    // uint32_t flags = 0; 
-    float angle=0;
+enable_servos();
+
+	
+	float angle=0;
     struct rect robot; 
 	robot.h = 44; 
 	robot.w = 21;
@@ -171,6 +174,9 @@ int main() {
             	turn_Left(2*shrek );
             }else if(i==6){
 		    //open the solar panel
+		    set_servo_position(3, 0)
+		    set_servo_position(3, 1820)
+		    set_servo_position(3, 0)
 		    moveBack(5);
 	    }else{
         	turn_Left(shrek);}
